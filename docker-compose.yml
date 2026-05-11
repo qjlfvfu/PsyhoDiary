@@ -25,6 +25,8 @@ services:
 
   backend:
     build: .
+    env_file:
+      - .env
     command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - .:/app
@@ -46,6 +48,8 @@ services:
 
   celery:
     build: .
+    env_file:
+      - .env
     command: celery -A config worker -l info
     volumes:
       - .:/app
@@ -62,6 +66,8 @@ services:
 
   celery-beat:
     build: .
+    env_file:
+      - .env
     command: celery -A config beat -l info
     volumes:
       - .:/app
