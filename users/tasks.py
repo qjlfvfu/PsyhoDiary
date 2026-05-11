@@ -1,94 +1,87 @@
 from celery import shared_task
-import logging
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils import timezone
-from django.contrib.auth import get_user_model
-
-
-User = get_user_model()
-logger = logging.getLogger(__name__)
-
-
-@shared_task
-def block_inactive_user():
-    """
-    Блокирует пользователей, которые не заходили более месяца
-    """
-    month_time = timezone.now - timezone.timedelta(days=30)
-    inactive_users = User.objects.filter(is_active=True, last_login__lt=month_time)
-    count = inactive_users.count()
-    updated_count = inactive_users.update(is_active=False)
-    logger.info(f"Заблокировано {updated_count} неактивных пользователей")
-
-    return {
-        "total_found": count,
-        "blocked": updated_count,
-        "date_threshold": month_time.isoformat(),
-    }
+from datetime import timedelta
+from .models import CustomUser, DoctorProfile
+from psyhodiary.models import Diary
 
 
 @shared_task
-def send_course_update_notification(course_id, course_name, user_email, user_name):
-    """
-    Отправка уведомления пользователю об обновлении курса
-    """
-    try:
-        subject = f'Курс "{course_name}" был обновлен!'
-        message = f"""
-        Здравствуйте, {user_name}!
+def send_daily_stats_to_doctors():
+    """Отправляет ежедневную статистику врачам"""
+    yesterday = timezone.now().date() - timedelta(days=1)
 
-        Курс "{course_name}", на который вы подписаны, был обновлен.
+    doctors = DoctorProfile.objects.all()
+    sent_count = 0
 
-        Зайдите на платформу, чтобы ознакомиться с новыми материалами.
+    for doctor_profile in doctors:
+        patients = doctor_profile.patients.all()
 
-        С уважением,
-        Команда платформы
-        """
+        total_entries = Diary.objects.filter(
+            user__in=patients,
+            created_date=yesterday
+        ).count()
 
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user_email],
-            fail_silently=False,
-        )
+        low_mood_count = 0
+        for patient in patients:
+            if Diary.check_low_mood(patient, days=3, threshold=7):
+                low_mood_count += 1
 
-        logger.info(
-            f"Уведомление отправлено пользователю {user_email} о курсе {course_name}"
-        )
-        return True
+        if patients.exists():
+            send_mail(
+                subject=f"📊 Ежедневная статистика | {yesterday}",
+                message=f"""
+Здравствуйте, {doctor_profile.user.email}!
 
-    except Exception as e:
-        logger.error(f"Ошибка отправки уведомления {user_email}: {e}")
-        return False
+Статистика за вчера ({yesterday}):
+
+📝 Всего записей в дневнике: {total_entries}
+😟 Пациентов с низким настроением (3+ дня): {low_mood_count}
+👥 Всего пациентов: {patients.count()}
+
+---
+PsyDiary Bot
+""",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[doctor_profile.user.email],
+                fail_silently=True,
+            )
+            sent_count += 1
+
+    return f"Статистика отправлена {sent_count} врачам"
+
+
+from celery import shared_task
+from django.utils import timezone
+from datetime import timedelta
+from .models import CustomUser
 
 
 @shared_task
-def notify_course_subscribers(course_id, course_name, updated_fields=None):
-    """
-    Отправка уведомлений всем знакомым
-    """
-    from lesson.models import Subscription
+def deactivate_inactive_users(days=4):
+    """Деактивирует пользователей, не заходивших более N дней"""
+    threshold_date = timezone.now() - timedelta(days=days)
 
-    subscribers = Subscription.objects.filter(course_id=course_id).select_related(
-        "user"
+    inactive_users = CustomUser.objects.filter(
+        is_active=True,
+        last_active__lt=threshold_date
     )
 
-    if not subscribers.exists():
-        logger.info(f"Нет подписчиков для курса {course_name}")
-        return {"status": "no_subscribers", "count": 0}
+    count = inactive_users.count()
 
-    sent_count = 0
-    for subscription in subscribers:
-        user = subscription.user
-        send_course_update_notification.delay(
-            course_id=course_id,
-            course_name=course_name,
-            user_email=user.email,
-            user_name=user.name if hasattr(user, "name") else user.email,
-        )
-        sent_count += 1
+    for user in inactive_users:
+        user.is_active = False
+        user.save(update_fields=['is_active'])
 
-    logger.info(f"Отправлено {sent_count} уведомлений для курса {course_name}")
-    return {"status": "sent", "count": sent_count}
+        # Опционально: отправить уведомление врачу
+        if user.attending_doctor:
+            from pillowtracker.models import Alert
+            Alert.objects.create(
+                user=user,
+                doctor=user.attending_doctor.user,
+                alert_type='inactive_patient',
+                message=f"Пациент {user.email} неактивен более {days} дней"
+            )
+
+    return f"Деактивировано {count} пользователей"

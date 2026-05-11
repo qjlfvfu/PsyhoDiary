@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Психологические тесты{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>📋 Психологические тесты</h1>
+    <p class="lead">Пройдите тесты для оценки психологического состояния</p>
+
+    <div class="row mt-4">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Шкала депрессии Бека</h5>
+                    <p class="card-text">Тест для оценки уровня депрессии</p>
+                    <a href="{% url 'psyhodiary:test_take' 'beck' %}" class="btn btn-primary">Пройти тест</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Шкала тревоги Бека</h5>
+                    <p class="card-text">Тест для оценки уровня тревожности</p>
+                    <a href="{% url 'psyhodiary:test_take' 'anxiety' %}" class="btn btn-primary">Пройти тест</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <a href="{% url 'psyhodiary:test_results' %}" class="btn btn-outline-secondary">📊 Мои результаты</a>
+    </div>
+</div>
+{% endblock %}

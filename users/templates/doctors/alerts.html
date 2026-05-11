@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Оповещения{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>⚠️ Оповещения</h2>
+    
+    {% if alerts %}
+        <div class="list-group mt-3">
+            {% for alert in alerts %}
+                <div class="list-group-item {% if not alert.is_read %}list-group-item-warning{% endif %}">
+                    <div class="d-flex justify-content-between">
+                        <strong>{{ alert.get_alert_type_display }}</strong>
+                        <small>{{ alert.created_at|date:"d.m.Y H:i" }}</small>
+                    </div>
+                    <p class="mt-2">{{ alert.message }}</p>
+                    {% if not alert.is_read %}
+                        <a href="{% url 'users:mark_alert_read' alert.id %}" class="btn btn-sm btn-secondary">Отметить как прочитанное</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info mt-3">Нет оповещений</div>
+    {% endif %}
+</div>
+{% endblock %}

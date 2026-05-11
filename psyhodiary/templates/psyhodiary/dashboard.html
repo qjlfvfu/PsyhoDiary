@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Привет, {{ user.email }}!</h1>
+    <p class="lead">Твоя статистика и активность</p>
+
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">График настроения (последние 7 дней)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="moodChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-3">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">📊 Статистика</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between">
+                            Записей в дневнике
+                            <span class="badge bg-primary rounded-pill">{{ total_entries }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            Мечт и целей
+                            <span class="badge bg-primary rounded-pill">{{ total_dreams }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            Привычек
+                            <span class="badge bg-primary rounded-pill">{{ total_habits }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">⚡ Быстрые действия</h5>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'psyhodiary:diary_create' %}" class="btn btn-primary w-100 mb-2">📝 Новая запись</a>
+                    <a href="{% url 'psyhodiary:diary_list' %}" class="btn btn-outline-secondary w-100 mb-2">📖 Все записи</a>
+                    <a href="{% url 'psyhodiary:dream_create' %}" class="btn btn-outline-secondary w-100 mb-2">✨ Новая мечта</a>
+                    <a href="{% url 'psyhodiary:habit_create' %}" class="btn btn-outline-secondary w-100 mb-2">🔄 Новая привычка</a>
+                    <a href="{% url 'psyhodiary:test_list' %}" class="btn btn-outline-secondary w-100 mb-2">📋 Пройти тест</a>
+                    <a href="{% url 'users:emergency_help' %}" class="btn btn-danger w-100">🚨 Экстренная помощь</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('moodChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ labels|safe }},
+            datasets: [{
+                label: 'Настроение',
+                data: {{ moods|safe }},
+                backgroundColor: 'rgba(177, 127, 92, 0.2)',
+                borderColor: '#B17F5C',
+                borderWidth: 2,
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    min: 1,
+                    max: 5,
+                    ticks: {
+                        stepSize: 1,
+                        callback: function(value) {
+                            const moods = {1: '😞', 2: '😕', 3: '😐', 4: '🙂', 5: '😊'};
+                            return moods[value] || value;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

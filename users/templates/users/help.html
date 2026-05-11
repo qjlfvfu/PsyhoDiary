@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Помощь{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>🆘 Помощь и поддержка</h1>
+    
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">📞 Горячие линии</h5>
+                </div>
+                <div class="card-body">
+                    {% if contacts %}
+                        <ul class="list-group">
+                            {% for contact in contacts %}
+                                <li class="list-group-item">
+                                    <strong>{{ contact.title }}</strong><br>
+                                    📞 {{ contact.phone }}
+                                    {% if contact.is_24h %}
+                                        <span class="badge bg-success float-end">Круглосуточно</span>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>Телефон доверия: <strong>8-800-333-44-34</strong></p>
+                        <p>Скорая помощь: <strong>103</strong> или <strong>112</strong></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0">ℹ️ О приложении</h5>
+                </div>
+                <div class="card-body">
+                    <p>PsyDiary помогает отслеживать:</p>
+                    <ul>
+                        <li>📝 Ежедневные записи и настроение</li>
+                        <li>✨ Мечты и цели</li>
+                        <li>🔄 Привычки и их выполнение</li>
+                        <li>📋 Психологические тесты</li>
+                    </ul>
+                    <p>Приложение не заменяет профессиональную медицинскую помощь!</p>
+                    <a href="{% url 'users:emergency_help' %}" class="btn btn-danger mt-2">🚨 Экстренная помощь</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

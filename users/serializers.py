@@ -1,10 +1,8 @@
-from django.contrib.admindocs.utils import named_group_matcher
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
-from .models import CustomUser,CustomDoctor
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from django.db import models
+from .models import CustomUser, DoctorProfile
 
 User = get_user_model()
 
@@ -72,8 +70,8 @@ class UserDetailSerializer(serializers.ModelSerializer):
     def get_is_moderator(self, obj):
         return obj.groups.filter(name="moderators").exists()
 
-    def get_is_doctor(self,obj):
-        return obj.groups.filter(named="doctor").exists()
+    def get_is_doctor(self, obj):
+        return obj.groups.filter(name="doctor").exists()
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}".strip() or obj.email
@@ -105,7 +103,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop("password2")
-        # Создаем username из email (если нет username в модели)
         validated_data["username"] = validated_data["email"].split("@")[0]
         user = User.objects.create_user(**validated_data)
         return user
@@ -121,11 +118,9 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
 # ========== Профиль пользователя ==========
 
-
 class PublicUserProfileSerializer(serializers.ModelSerializer):
     """
     Публичный сериализатор для просмотра чужих профилей
-    (без конфиденциальной информации)
     """
 
     full_name = serializers.SerializerMethodField()
@@ -142,10 +137,24 @@ class PrivateUserProfileSerializer(serializers.ModelSerializer):
     """
     Приватный сериализатор для просмотра профиля пациента
     """
-    full_name= serializers.SerializerMethodField()
+    full_name = serializers.SerializerMethodField()
+
     class Meta:
         model = CustomUser
-        fields = ["full_name","phone","avatar","email"]
+        fields = ["full_name", "phone_number", "avatar", "email", "description"]
 
-    def get_full_name(self,obj):
-        return f"{obj.first_name} {obj.last_name}". strip() or obj.email
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}".strip() or obj.email
+
+
+class DoctorProfileSerializer(serializers.ModelSerializer):
+    """Сериализатор для профиля врача"""
+    user = UserSerializer(read_only=True)
+    full_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = DoctorProfile
+        fields = ["id", "user", "full_name", "specialization", "experience_years", "license_number"]
+
+    def get_full_name(self, obj):
+        return f"{obj.user.first_name} {obj.user.last_name}".strip() or obj.user.email

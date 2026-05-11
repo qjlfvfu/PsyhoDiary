@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Мои записи{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Мои записи</h1>
+        <a href="{% url 'psyhodiary:diary_create' %}" class="btn btn-primary">
+            + Новая запись
+        </a>
+    </div>
+
+    {% if diary_entries %}
+        <div class="row">
+            {% for entry in diary_entries %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title">{{ entry.title }}</h5>
+                                <span class="badge bg-secondary">{{ entry.get_mood_display }}</span>
+                            </div>
+                            <p class="card-text text-muted">
+                                {{ entry.content|truncatewords:30|linebreaks }}
+                            </p>
+                            <small class="text-muted">
+                                📅 {{ entry.created_date|date:"d.m.Y" }}
+                            </small>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{% url 'psyhodiary:diary_detail' entry.pk %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
+                            <a href="{% url 'psyhodiary:diary_update' entry.pk %}" class="btn btn-sm btn-outline-secondary">Редактировать</a>
+                            <a href="{% url 'psyhodiary:diary_delete' entry.pk %}" class="btn btn-sm btn-outline-danger">Удалить</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Пагинация (внутри content) -->
+        <div class="pagination justify-content-center mt-4">
+            <span class="step-links">
+                {% if diary_entries.has_previous %}
+                    <a href="?page=1" class="btn btn-sm btn-outline-primary">&laquo; первая</a>
+                    <a href="?page={{ diary_entries.previous_page_number }}" class="btn btn-sm btn-outline-primary">предыдущая</a>
+                {% endif %}
+
+                <span class="current mx-2">
+                    Страница {{ diary_entries.number }} из {{ diary_entries.paginator.num_pages }}.
+                </span>
+
+                {% if diary_entries.has_next %}
+                    <a href="?page={{ diary_entries.next_page_number }}" class="btn btn-sm btn-outline-primary">следующая</a>
+                    <a href="?page={{ diary_entries.paginator.num_pages }}" class="btn btn-sm btn-outline-primary">последняя &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            У вас пока нет записей.
+            <a href="{% url 'psyhodiary:diary_create' %}">Создайте первую запись</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

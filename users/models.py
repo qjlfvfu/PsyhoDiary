@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -41,16 +42,25 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractUser):
     """Модель Пользователя"""
-
+    name = models.CharField(max_length=150, verbose_name="Имя", blank=False, null=False)
     email = models.EmailField(verbose_name="Почта",unique=True)
     avatar = models.ImageField(verbose_name="Аватарка",upload_to="avatars/", blank=True, null=True)
-    description = models.TextField(verbose_name="Описание болезни",blank=True,null=False)
+    description = models.TextField(blank=True, null=True, verbose_name="О себе")
     phone_number = models.CharField(verbose_name="Номер телефона",max_length=15, blank=True, null=False)
     is_active = models.BooleanField(verbose_name="Активность пользователя",default=True)
     is_staff = models.BooleanField(default=False)
+    attending_doctor = models.ForeignKey(
+        'DoctorProfile',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='patients',
+        verbose_name="Лечащий врач"
+    )
+    is_doctor = models.BooleanField(default=False, verbose_name="Врач")
+    last_active = models.DateTimeField(null=True, blank=True, verbose_name="Последняя активность")
 
     objects = CustomUserManager()
-
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
@@ -58,14 +68,10 @@ class CustomUser(AbstractUser):
         return self.email
 
 
-class CustomDoctor(AbstractUser):
-    """Модель для Врачей"""
-
-    email = models.EmailField(verbose_name="Почта",unique=True)
-    avatar = models.ImageField(verbose_name="Аватар",upload_to="avatars/",blank=False,null=False)
-    is_staff = models.BooleanField(default=False)
-    is_doctor = models.BooleanField(default=True)
-
-    objects = CustomUserManager()
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS =[]
+class DoctorProfile(models.Model):
+    user = models.OneToOneField('users.CustomUser',on_delete=models.CASCADE,related_name='doctor_profile')
+    specialization = models.CharField(max_length=200, blank=True, verbose_name="Специализация")
+    experience_years = models.IntegerField(default=0, verbose_name="Лет опыта")
+    license_number = models.CharField(max_length=50, blank=True, verbose_name="Номер лицензии")
+    def __str__(self):
+        return f"Доктор {self.user.email}"

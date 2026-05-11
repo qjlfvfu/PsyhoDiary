@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Отметить привычку{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">✅ Отметить выполнение</h4>
+                </div>
+                <div class="card-body text-center">
+                    {% if already_logged %}
+                        <div class="alert alert-warning">
+                            ⚠️ Вы уже отмечали эту привычку сегодня!
+                        </div>
+                        <a href="{% url 'psyhodiary:habit_list' %}" class="btn btn-primary">Вернуться к привычкам</a>
+                    {% else %}
+                        <p>Вы уверены, что выполнили привычку <strong>"{{ habit.name }}"</strong> сегодня?</p>
+                        <form method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-lg">✅ Да, выполнил(а)</button>
+                            <a href="{% url 'psyhodiary:habit_list' %}" class="btn btn-secondary btn-lg">Отмена</a>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

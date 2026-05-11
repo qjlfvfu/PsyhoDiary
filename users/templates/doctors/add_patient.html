@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Добавить пациента{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>➕ Добавить пациента</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Поиск -->
+                    <form method="get" class="mb-4">
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control" placeholder="Поиск по email, имени или фамилии..." value="{{ query }}">
+                            <button type="submit" class="btn btn-primary">🔍 Найти</button>
+                        </div>
+                    </form>
+
+                    <!-- Результаты поиска -->
+                    <h5>Доступные пользователи</h5>
+                    {% if available_users %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Email</th>
+                                        <th>Имя</th>
+                                        <th>Фамилия</th>
+                                        <th>Действие</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in available_users %}
+                                    <tr>
+                                        <td>{{ user.email }}</td>
+                                        <td>{{ user.first_name|default:"—" }}</td>
+                                        <td>{{ user.last_name|default:"—" }}</td>
+                                        <td>
+                                            <a href="{% url 'users:assign_patient' user.id %}" class="btn btn-sm btn-success">
+                                                Добавить
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            {% if query %}
+                                Пользователи не найдены
+                            {% else %}
+                                Нет доступных пользователей для добавления
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mt-3">
+                        <a href="{% url 'users:patients_list' %}" class="btn btn-secondary">← Назад к списку пациентов</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

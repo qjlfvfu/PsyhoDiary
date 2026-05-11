@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Экстренная помощь{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-danger shadow-lg">
+                <div class="card-header bg-danger text-white text-center">
+                    <h2>🚨 Экстренная психологическая помощь 🚨</h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning text-center">
+                        <h4>Не оставайтесь один на один с проблемой!</h4>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h5>📞 Круглосуточные телефоны доверия:</h5>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item"><strong>8-800-333-44-34</strong> — Единый общероссийский телефон доверия</li>
+                            <li class="list-group-item"><strong>112</strong> — Служба экстренной помощи</li>
+                            <li class="list-group-item"><strong>8-800-2000-122</strong> — Детский телефон доверия</li>
+                        </ul>
+                        
+                        <h5>💬 Чат с психологом:</h5>
+                        <p><a href="https://psypal.ru" target="_blank">psypal.ru</a> — бесплатная онлайн-консультация</p>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a href="{% url 'psyhodiary:main' %}" class="btn btn-secondary">Вернуться на главную</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

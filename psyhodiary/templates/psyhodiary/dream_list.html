@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Мои мечты{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>✨ Мои мечты и цели</h1>
+        <a href="{% url 'psyhodiary:dream_create' %}" class="btn btn-primary">+ Добавить мечту</a>
+    </div>
+
+    {% if dreams %}
+        <div class="row">
+            {% for dream in dreams %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h5 class="card-title">{{ dream.title }}</h5>
+                                <span class="badge
+                                    {% if dream.status == 'completed' %}bg-success
+                                    {% elif dream.status == 'in_progress' %}bg-primary
+                                    {% elif dream.status == 'postponed' %}bg-warning
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ dream.get_status_display }}
+                                </span>
+                            </div>
+                            <p class="card-text text-muted">{{ dream.description|truncatewords:30 }}</p>
+                            {% if dream.target_date %}
+                                <small class="text-muted">📅 Планируемая дата: {{ dream.target_date|date:"d.m.Y" }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{% url 'psyhodiary:dream_update' dream.pk %}" class="btn btn-sm btn-warning">Редактировать</a>
+                            <a href="{% url 'psyhodiary:dream_delete' dream.pk %}" class="btn btn-sm btn-danger">Удалить</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            У вас пока нет мечт. Добавьте первую мечту!
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Мои привычки{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>🔄 Мои привычки</h1>
+        <a href="{% url 'psyhodiary:habit_create' %}" class="btn btn-primary">+ Добавить привычку</a>
+    </div>
+
+    {% if habits %}
+        <div class="row">
+            {% for habit in habits %}
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ habit.name }}</h5>
+                            <p class="card-text text-muted">{{ habit.description|truncatewords:20 }}</p>
+                            <small class="text-muted">
+                                Периодичность: {{ habit.get_period_display }}<br>
+                                Цель: {{ habit.target_count }} раз(а)
+                            </small>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{% url 'psyhodiary:habit_log' habit.pk %}" class="btn btn-sm btn-success">✅ Отметить сегодня</a>
+                            <button type="button" class="btn btn-sm btn-secondary" disabled>✅ {{ habit.logs.count }} отметок</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            У вас пока нет привычек. Добавьте первую привычку!
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

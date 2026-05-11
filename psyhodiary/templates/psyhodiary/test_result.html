@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Результаты тестов{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>📊 Результаты пройденных тестов</h1>
+
+    {% if results %}
+        <div class="table-responsive mt-4">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Название теста</th>
+                        <th>Результат</th>
+                        <th>Интерпретация</th>
+                        <th>Дата</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                    <tr>
+                        <td>{{ result.test_name }}</td>
+                        <td>{{ result.score }} баллов</td>
+                        <td>{{ result.interpretation|truncatewords:10 }}</td>
+                        <td>{{ result.created_at|date:"d.m.Y H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info mt-4">
+            Вы ещё не проходили тесты. <a href="{% url 'psyhodiary:test_list' %}">Пройти тест</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
