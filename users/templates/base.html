@@ -43,7 +43,8 @@
                 {% if not user.is_doctor and not user.is_staff %}
                 <!-- Кнопки для обычных пользователей -->
                 <li class="nav-item">
-                <a href="{% url 'pillowtracker:medication_list' %}" class="btn btn-primary">💊 Трекер таблеток</a>
+                <a class="nav-link" href="{% url 'pillowtracker:medication_list' %}" >💊 Трекер таблеток</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'psyhodiary:habit_list' %}" style=" font-weight: 500;">Мой Трекер</a>
                 </li>
