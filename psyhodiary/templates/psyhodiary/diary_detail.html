@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ diary_entry.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3>{{ diary_entry.title }}</h3>
+            <span class="badge bg-secondary">{{ diary_entry.get_mood_display }}</span>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">
+                📅 {{ diary_entry.created_date|date:"d.m.Y" }}
+            </p>
+            <p>{{ diary_entry.content|linebreaks }}</p>
+        </div>
+        <div class="card-footer">
+            <a href="{% url 'psyhodiary:diary_update' diary_entry.pk %}" class="btn btn-warning btn-sm">Редактировать</a>
+            <a href="{% url 'psyhodiary:diary_delete' diary_entry.pk %}" class="btn btn-danger btn-sm">Удалить</a>
+            <a href="{% url 'psyhodiary:diary_list' %}" class="btn btn-secondary btn-sm">Назад к списку</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
