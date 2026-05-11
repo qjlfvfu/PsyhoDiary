@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
@@ -43,8 +44,15 @@ def dashboard(request):
 # ==================== ДНЕВНИК (CRUD) ====================
 @login_required
 def diary_list(request):
-    """Список записей дневника с пагинацией"""
+    """Список записей дневника с пагинацией и поиском"""
     entries_list = Diary.objects.filter(user=request.user).order_by("-created_date")
+
+    # Поиск
+    query = request.GET.get('q')
+    if query:
+        entries_list = entries_list.filter(
+            Q(title__icontains=query) | Q(content__icontains=query)
+        )
 
     paginator = Paginator(entries_list, 10)  # 10 записей на страницу
 
@@ -56,8 +64,10 @@ def diary_list(request):
     except EmptyPage:
         entries = paginator.page(paginator.num_pages)
 
-    return render(request, "psyhodiary/diary_list.html", {"diary_entries": entries})
-
+    return render(request, "psyhodiary/diary_list.html", {
+        "diary_entries": entries,
+        "query": query,
+    })
 
 @login_required
 def diary_create(request):
