@@ -8,22 +8,26 @@ from datetime import timedelta
 class Diary(models.Model):
     objects = None
     MOOD_CHOICES = [
-        (1, '😞 Очень плохо'),
-        (2, '😕 Плохо'),
-        (3, '😐 Нормально'),
-        (4, '🙂 Хорошо'),
-        (5, '😊 Отлично'),
+        (1, "😞 Очень плохо"),
+        (2, "😕 Плохо"),
+        (3, "😐 Нормально"),
+        (4, "🙂 Хорошо"),
+        (5, "😊 Отлично"),
     ]
 
     title = models.CharField(max_length=100, verbose_name="Заголовок")
     content = models.TextField(verbose_name="Содержание")
-    mood = models.IntegerField(choices=MOOD_CHOICES, default=3, verbose_name="Настроение")
+    mood = models.IntegerField(
+        choices=MOOD_CHOICES, default=3, verbose_name="Настроение"
+    )
     created_date = models.DateField(auto_now_add=True, verbose_name="Дата")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Обновлено")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="diary_entries")
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="diary_entries"
+    )
 
     class Meta:
-        ordering = ['-created_date']
+        ordering = ["-created_date"]
         verbose_name = "Запись дневника"
         verbose_name_plural = "Записи дневника"
 
@@ -46,21 +50,27 @@ class Diary(models.Model):
 # 2. Мечты (цели, желания)
 class Dream(models.Model):
     STATUS_CHOICES = [
-        ('draft', 'Черновик'),
-        ('in_progress', 'В процессе'),
-        ('completed', 'Исполнено'),
-        ('postponed', 'Отложено'),
+        ("draft", "Черновик"),
+        ("in_progress", "В процессе"),
+        ("completed", "Исполнено"),
+        ("postponed", "Отложено"),
     ]
 
     title = models.CharField(max_length=150, verbose_name="Мечта / цель")
     description = models.TextField(blank=True, verbose_name="Описание")
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft', verbose_name="Статус")
-    target_date = models.DateField(null=True, blank=True, verbose_name="Планируемая дата")
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default="draft", verbose_name="Статус"
+    )
+    target_date = models.DateField(
+        null=True, blank=True, verbose_name="Планируемая дата"
+    )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="dreams")
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="dreams"
+    )
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
         verbose_name = "Мечта"
         verbose_name_plural = "Мечты"
 
@@ -71,16 +81,25 @@ class Dream(models.Model):
 # 3. Трекер привычек
 class Habit(models.Model):
     PERIOD_CHOICES = [
-        ('daily', 'Ежедневно'),
-        ('weekly', 'Еженедельно'),
-        ('monthly', 'Ежемесячно'),
+        ("daily", "Ежедневно"),
+        ("weekly", "Еженедельно"),
+        ("monthly", "Ежемесячно"),
     ]
 
     name = models.CharField(max_length=100, verbose_name="Привычка")
     description = models.TextField(blank=True, verbose_name="Описание")
-    period = models.CharField(max_length=20, choices=PERIOD_CHOICES, default='daily', verbose_name="Периодичность")
-    target_count = models.PositiveIntegerField(default=1, verbose_name="Цель (раз в период)")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="habits")
+    period = models.CharField(
+        max_length=20,
+        choices=PERIOD_CHOICES,
+        default="daily",
+        verbose_name="Периодичность",
+    )
+    target_count = models.PositiveIntegerField(
+        default=1, verbose_name="Цель (раз в период)"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="habits"
+    )
 
     class Meta:
         verbose_name = "Привычка"
@@ -92,12 +111,16 @@ class Habit(models.Model):
 
 # 4. Отметки выполнения привычек
 class HabitLog(models.Model):
-    habit = models.ForeignKey(Habit, on_delete=models.CASCADE, related_name="logs", verbose_name="Привычка")
+    habit = models.ForeignKey(
+        Habit, on_delete=models.CASCADE, related_name="logs", verbose_name="Привычка"
+    )
     completed_date = models.DateField(auto_now_add=True, verbose_name="Дата выполнения")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="habit_logs")
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="habit_logs"
+    )
 
     class Meta:
-        unique_together = ('habit', 'completed_date', 'user')
+        unique_together = ("habit", "completed_date", "user")
         verbose_name = "Отметка привычки"
         verbose_name_plural = "Отметки привычек"
 
@@ -110,11 +133,15 @@ class TestResult(models.Model):
     test_name = models.CharField(max_length=200, verbose_name="Название теста")
     score = models.IntegerField(verbose_name="Результат (баллы)")
     interpretation = models.TextField(blank=True, verbose_name="Интерпретация")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата прохождения")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="test_results")
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name="Дата прохождения"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="test_results"
+    )
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
         verbose_name = "Результат теста"
         verbose_name_plural = "Результаты тестов"
 
@@ -132,7 +159,7 @@ class EmergencyContact(models.Model):
     order = models.PositiveIntegerField(default=0, verbose_name="Порядок")
 
     class Meta:
-        ordering = ['order', 'title']
+        ordering = ["order", "title"]
         verbose_name = "Экстренный контакт"
         verbose_name_plural = "Экстренные контакты"
 

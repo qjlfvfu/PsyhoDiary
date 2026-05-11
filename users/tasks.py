@@ -19,8 +19,7 @@ def send_daily_stats_to_doctors():
         patients = doctor_profile.patients.all()
 
         total_entries = Diary.objects.filter(
-            user__in=patients,
-            created_date=yesterday
+            user__in=patients, created_date=yesterday
         ).count()
 
         low_mood_count = 0
@@ -52,36 +51,30 @@ PsyDiary Bot
     return f"Статистика отправлена {sent_count} врачам"
 
 
-from celery import shared_task
-from django.utils import timezone
-from datetime import timedelta
-from .models import CustomUser
-
-
 @shared_task
 def deactivate_inactive_users(days=4):
     """Деактивирует пользователей, не заходивших более N дней"""
     threshold_date = timezone.now() - timedelta(days=days)
 
     inactive_users = CustomUser.objects.filter(
-        is_active=True,
-        last_active__lt=threshold_date
+        is_active=True, last_active__lt=threshold_date
     )
 
     count = inactive_users.count()
 
     for user in inactive_users:
         user.is_active = False
-        user.save(update_fields=['is_active'])
+        user.save(update_fields=["is_active"])
 
         # Опционально: отправить уведомление врачу
         if user.attending_doctor:
             from pillowtracker.models import Alert
+
             Alert.objects.create(
                 user=user,
                 doctor=user.attending_doctor.user,
-                alert_type='inactive_patient',
-                message=f"Пациент {user.email} неактивен более {days} дней"
+                alert_type="inactive_patient",
+                message=f"Пациент {user.email} неактивен более {days} дней",
             )
 
     return f"Деактивировано {count} пользователей"
