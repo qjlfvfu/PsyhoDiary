@@ -1,15 +1,6 @@
 services:
   db:
     image: postgres:15
-    environment:
-      - SECRET_KEY=${SECRET_KEY}
-      - DEBUG=${DEBUG}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -44,12 +35,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    environment:
-      DB_HOST: db
-      REDIS_HOST: redis
-      DEBUG: 'False'
-      SECRET_KEY: ${SECRET_KEY}
-      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
 
   celery:
     build: .
@@ -63,11 +48,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    environment:
-      DB_HOST: db
-      REDIS_HOST: redis
-      SECRET_KEY: ${SECRET_KEY}
-      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
 
   celery-beat:
     build: .
@@ -83,11 +63,6 @@ services:
         condition: service_healthy
       celery:
         condition: service_started
-    environment:
-      DB_HOST: db
-      REDIS_HOST: redis
-      SECRET_KEY: ${SECRET_KEY}
-      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
 
   nginx:
     image: nginx:alpine
@@ -98,8 +73,9 @@ services:
       - "80:80"
     depends_on:
       - backend
-      -
+
 volumes:
   postgres_data:
   redis_data:
   static_volume:
+  media_volume:
