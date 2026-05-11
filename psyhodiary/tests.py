@@ -1,9 +1,7 @@
-from datetime import timedelta
-
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from rest_framework.utils import timezone
-
+from django.utils import timezone
+from datetime import timedelta
 from .models import Diary
 
 User = get_user_model()

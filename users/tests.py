@@ -22,7 +22,7 @@ class UserRegistrationTest(TestCase):
 
     def test_doctor_registration(self):
         response = self.client.post(
-            reverse("users:doctor_register"),
+            reverse("users:register_doctor"),
             {
                 "email": "doctor@test.com",
                 "name": "Test Doctor",
