@@ -48,7 +48,7 @@ def diary_list(request):
     entries_list = Diary.objects.filter(user=request.user).order_by("-created_date")
 
     # Поиск
-    query = request.GET.get('q')
+    query = request.GET.get("q")
     if query:
         entries_list = entries_list.filter(
             Q(title__icontains=query) | Q(content__icontains=query)
@@ -64,10 +64,15 @@ def diary_list(request):
     except EmptyPage:
         entries = paginator.page(paginator.num_pages)
 
-    return render(request, "psyhodiary/diary_list.html", {
-        "diary_entries": entries,
-        "query": query,
-    })
+    return render(
+        request,
+        "psyhodiary/diary_list.html",
+        {
+            "diary_entries": entries,
+            "query": query,
+        },
+    )
+
 
 @login_required
 def diary_create(request):
