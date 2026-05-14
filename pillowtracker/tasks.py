@@ -1,10 +1,12 @@
-from celery import shared_task
-from django.utils import timezone
 from datetime import timedelta
-from django.core.mail import send_mail
+
+from celery import shared_task
 from django.conf import settings
-from .models import Medication, MedicationLog, Alert
+from django.core.mail import send_mail
+from django.utils import timezone
+
 from psyhodiary.models import Diary
+from .models import Medication, MedicationLog, Alert
 
 
 @shared_task

@@ -12,6 +12,24 @@
         }
         .nav-link:hover {
             color: #B17F5C !important; /* теплый акцент при наведении */
+            html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main.container.mt-4 {
+            flex: 1;  /* Занимает всё свободное пространство */
+        }
+
+        footer {
+            margin-top: auto !important;  /* Прижимает footer к низу */
+        }
         }
     </style>
 </head>
@@ -42,9 +60,9 @@
                 </li>
                 {% if not user.is_doctor and not user.is_staff %}
                 <!-- Кнопки для обычных пользователей -->
-                <li class="nav-item">
-                <a class="nav-link" href="{% url 'pillowtracker:medication_list' %}" >💊 Трекер таблеток</a>
-                </li>
+<!--                <li class="nav-item">-->
+<!--                <a class="nav-link" href="{% url 'pillowtracker:medication_list' %}" >💊 Трекер таблеток</a>-->
+<!--                </li>-->
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'psyhodiary:habit_list' %}" style=" font-weight: 500;">Мой Трекер</a>
                 </li>

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "drf_spectacular",
     "rest_framework",
     "rest_framework_simplejwt",
     "corsheaders",
@@ -107,7 +108,7 @@ DATABASES = {
         "HOST": os.getenv("DB_HOST", "localhost"),
         "PORT": os.getenv("DB_PORT", "5432"),
         "OPTIONS": {
-            "options": "-c client_encoding=UTF8",  # <--- ЭТО ГЛАВНОЕ ИСПРАВЛЕНИЕ
+            "options": "-c client_encoding=UTF8",
         },
     }
 }
@@ -116,6 +117,7 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PAGINATION_CLASS": "psyhodiary.paginators.DiaryPagination",
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 
@@ -174,4 +176,11 @@ LOGGING = {
         "handlers": ["console"],
         "level": "DEBUG",
     },
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'PsyDiary API',
+    'DESCRIPTION': 'API для ведения психологического дневника с отслеживанием привычек и приемом лекарств',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
 }
