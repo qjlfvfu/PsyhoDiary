@@ -117,7 +117,7 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PAGINATION_CLASS": "psyhodiary.paginators.DiaryPagination",
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 
@@ -179,8 +179,8 @@ LOGGING = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'PsyDiary API',
-    'DESCRIPTION': 'API для ведения психологического дневника с отслеживанием привычек и приемом лекарств',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
+    "TITLE": "PsyDiary API",
+    "DESCRIPTION": "API для ведения психологического дневника с отслеживанием привычек и приемом лекарств",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
 }
