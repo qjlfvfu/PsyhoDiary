@@ -353,3 +353,8 @@ def mark_alert_read(request, alert_id):
     # Возвращаемся на предыдущую страницу
     next_url = request.GET.get("next", "users:doctor_alerts")
     return redirect(next_url)
+
+# Политика конфиденциальности
+def privacy_policy(request):
+    """Страница политики конфиденциальности"""
+    return render(request, 'users/privacy_policy.html')

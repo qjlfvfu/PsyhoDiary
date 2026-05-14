@@ -39,6 +39,7 @@ urlpatterns = [
     path("patients/assign/<int:user_id>/", views.assign_patient, name="assign_patient"),
     path("alerts/", views.doctor_alerts, name="doctor_alerts"),
     path("alert/<int:alert_id>/read/", views.mark_alert_read, name="mark_alert_read"),
+    path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
     # Помощь
     path("help/", views.help_page, name="help"),
     path("emergency/", views.emergency_help, name="emergency_help"),
