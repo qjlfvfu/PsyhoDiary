@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Выход{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Вы вышли из системы</h4>
+                </div>
+                <div class="card-body text-center">
+                    <p>Спасибо, что пользовались нашим сервисом!</p>
+                    <a href="{% url 'users:login' %}" class="btn btn-primary">Войти снова</a>
+                    <a href="{% url 'psyhodiary:main' %}" class="btn btn-secondary">На главную</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

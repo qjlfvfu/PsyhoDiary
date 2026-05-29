@@ -1,28 +1,60 @@
-from django.test import TestCase
+import os
+import sys
+import django
+from django.db import connection
+from django.contrib.auth import get_user_model
 
-# Create your tests here.
-import psycopg2
-from psycopg2 import OperationalError
+# Устанавливаем переменные окружения для теста
+os.environ["DB_HOST"] = "localhost"
+os.environ["DJANGO_SETTINGS_MODULE"] = "config.settings"
 
-# ЗАМЕНИТЕ ЭТИ ДАННЫЕ НА ВАШИ РЕАЛЬНЫЕ (из .env файла)
-# Скорее всего, их нужно будет только скопировать из настроек.
-conn_params = {
-    "dbname": "postgres",      # На время проверки можно подключиться к стандартной БД "postgres"
-    "user": "postgres",
-    "password": "123",  # <--- ВАШ ПАРОЛЬ
-    "host": "localhost",
-    "port": "5432"
-}
+# Добавляем путь к проекту
+sys.path.append(os.path.dirname(__file__))
 
-try:
-    with psycopg2.connect(**conn_params) as conn:
-        print("✅ Подключение успешно!")
-except OperationalError as e:
-    # Пробуем декодировать сообщение об ошибке в кодировку Windows-1251
+django.setup()
+
+
+User = get_user_model()
+
+
+def test_database():
+    print("\n" + "=" * 50)
+    print("ТЕСТ ПОДКЛЮЧЕНИЯ К БАЗЕ ДАННЫХ")
+    print("=" * 50 + "\n")
+
+    # Тест 1: Подключение к БД
     try:
-        # e.args[0] - это байтовая строка с сообщением от сервера
-        real_error_message = e.args[0].decode('windows-1251')
-        print(f"🔴 Реальная ошибка подключения: {real_error_message}")
-    except:
-        # Если декодирование не удалось, выводим сырую ошибку
-        print(f"🔴 Ошибка подключения (не удалось декодировать): {e}")
+        connection.ensure_connection()
+        print("✅ [1/3] Подключение к базе данных - УСПЕШНО")
+    except Exception as e:
+        print(f"❌ [1/3] Ошибка подключения: {e}")
+        return False
+
+    # Тест 2: Версия PostgreSQL
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT version()")
+            version = cursor.fetchone()[0].split(",")[0]
+            print(f"✅ [2/3] PostgreSQL версия - {version}")
+    except Exception as e:
+        print(f"❌ [2/3] Ошибка: {e}")
+        return False
+
+    # Тест 3: Имя базы данных
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT current_database()")
+            db_name = cursor.fetchone()[0]
+            print(f"✅ [3/3] База данных - {db_name}")
+    except Exception as e:
+        print(f"❌ [3/3] Ошибка: {e}")
+        return False
+
+    print("\n" + "=" * 50)
+    print("✅ ВСЕ ТЕСТЫ ПРОЙДЕНЫ")
+    print("=" * 50)
+    return True
+
+
+if __name__ == "__main__":
+    test_database()

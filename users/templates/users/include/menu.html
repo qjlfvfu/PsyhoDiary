@@ -1,12 +1,72 @@
 <header class="header">
     <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
-        <h5 class="my-0 mr-md-auto font-weight-normal">Skystore</h5>
-        <nav class="ms-5">
-        <a class="p-2 btn btn-outline-primary" href="/">Главная</a>
-        <a class="p-2 btn btn-outline-primary" href="/catalog/">Каталог</a>
-        <a class="p-2 btn btn-outline-primary" href="/contacts/">Контакты</a>
-        <a class="p-2 btn btn-outline-primary" href="/product/create/">Добавить товар</a>
-        <a class="p-2 btn btn-outline-primary" href="/blog/create/">Поплакаться</a>
-        </nav>
+        <body>
+    <!-- navbar-->
+<nav class="navbar navbar-expand-lg" style="background-color: #E2D4C0; color: #4A3E35;">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'psyhodiary:main' %}"> Мой дневник</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                {% if user.is_doctor %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'users:patients_list' %}">📋 Мои пациенты</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'users:add_patient' %}">➕ Добавить пациента</a>
+                    </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'psyhodiary:diary_list' %}" style=" font-weight: 500;">Ежедневник</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'psyhodiary:dream_list' %}" style=" font-weight: 500;">Мечты</a>
+                </li>
+                {% if not user.is_doctor and not user.is_staff %}
+                <!-- Кнопки для обычных пользователей -->
+                <li class="nav-item">
+                <a href="{% url 'pillowtracker:medication_list' %}" class="btn btn-primary">💊 Трекер таблеток</a>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'psyhodiary:habit_list' %}" style=" font-weight: 500;">Мой Трекер</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'psyhodiary:test_list' %}" style=" font-weight: 500;">Тесты</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'users:help' %}" style=" font-weight: 500;">Помощь</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav" >
+                {%if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                       {{user.email}}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="{% url 'users:profile' %}">Профиль</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+
+                        <form method="post" action="{% url 'users:logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item">Выйти</button>
+                        </form>
+                    </li>
+                    </ul>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'users:login' %}">Вход</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'users:register' %}">Регистрация</a>
+                </li>
+            {% endif %}
+            </ul>
     </div>
+</nav>
 </header>

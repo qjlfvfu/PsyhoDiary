@@ -118,6 +118,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
 # ========== Профиль пользователя ==========
 
+
 class PublicUserProfileSerializer(serializers.ModelSerializer):
     """
     Публичный сериализатор для просмотра чужих профилей
@@ -137,6 +138,7 @@ class PrivateUserProfileSerializer(serializers.ModelSerializer):
     """
     Приватный сериализатор для просмотра профиля пациента
     """
+
     full_name = serializers.SerializerMethodField()
 
     class Meta:
@@ -149,12 +151,20 @@ class PrivateUserProfileSerializer(serializers.ModelSerializer):
 
 class DoctorProfileSerializer(serializers.ModelSerializer):
     """Сериализатор для профиля врача"""
+
     user = UserSerializer(read_only=True)
     full_name = serializers.SerializerMethodField()
 
     class Meta:
         model = DoctorProfile
-        fields = ["id", "user", "full_name", "specialization", "experience_years", "license_number"]
+        fields = [
+            "id",
+            "user",
+            "full_name",
+            "specialization",
+            "experience_years",
+            "license_number",
+        ]
 
     def get_full_name(self, obj):
         return f"{obj.user.first_name} {obj.user.last_name}".strip() or obj.user.email

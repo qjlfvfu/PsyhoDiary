@@ -69,7 +69,8 @@
                             <div class="mb-3"><span style="font-size: 3rem;">💊</span></div>
                             <h5 class="card-title">Трекер таблеток</h5>
                             <p class="card-text flex-grow-1">Не забывай принимать лекарства вовремя</p>
-                            <a href="{% url 'pillowtracker:medication_list' %}" class="btn btn-outline-primary mt-auto">Перейти</a>
+                            <button type="button" onclick="return false;" class="btn btn-outline-primary mt-auto">Перейти</button>
+<!--                            <a href="{% url 'pillowtracker:medication_list' %}" class="btn btn-outline-primary mt-auto">Перейти</a>-->
                         </div>
                     </div>
                 </div>
@@ -105,7 +106,7 @@
                             <div class="mb-3"><span style="font-size: 3rem;">🆘</span></div>
                             <h5 class="card-title">Экстренная помощь</h5>
                             <p class="card-text flex-grow-1">Если стало плохо — здесь есть контакты поддержки</p>
-                            <a href="{% url 'psyhodiary:help' %}" class="btn btn-outline-danger mt-auto">Помощь</a>
+                            <a href="{% url 'users:help' %}" class="btn btn-outline-danger mt-auto">Помощь</a>
                         </div>
                     </div>
                 </div>

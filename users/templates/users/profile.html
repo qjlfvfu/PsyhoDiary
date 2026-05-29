@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block title %}{% trans 'Профиль' %} - SpamManager{% endblock %}
+{% block title %}{% trans 'Профиль' %} PsyhoProfile{% endblock %}
 
 {% block content %}
 <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
@@ -110,22 +110,6 @@
                     <h4 class="my-0 font-weight-normal">Действия</h4>
                 </div>
                 <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <!-- Ссылки на spammanager -->
-                        <a href="{% url 'spammanager:client_list' %}" class="btn btn-outline-primary">
-                            <i class="bi bi-people"></i> Мои клиенты
-                        </a>
-
-                        <a href="{% url 'spammanager:message_list' %}" class="btn btn-outline-success">
-                            <i class="bi bi-envelope"></i> Мои сообщения
-                        </a>
-
-                        <a href="{% url 'spammanager:mailing_list' %}" class="btn btn-outline-info">
-                            <i class="bi bi-send"></i> Мои рассылки
-                        </a>
-
-                        <hr>
-
                         <!-- Статус аккаунта -->
                         {% if user.is_staff %}
                         <div class="alert alert-success mb-2 text-center">
